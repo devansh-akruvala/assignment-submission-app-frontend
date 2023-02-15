@@ -1,25 +1,36 @@
+import { useEffect } from 'react';
 import './App.css';
+import { useLocalState } from './util/useLocalStorage';
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+} from "react-router-dom";
+import Home from './components/Home';
+import Dashboard from './components/Dashboard';
+import Login from './components/Login';
+import PrivateRoute from './util/PrivateRoute';
+
+
 
 function App() {
+  const [jwt, setJwt] = useLocalState("", "jwt")
 
-  fetch('api/auth/login',{
-    "headers":{
-      "content-type":"application/json"
-    },
-     "method":"post",
-    "body":JSON.stringify({
-      "username":"dev",
-      "password":"123"
-    })
-  }).then((response)=>Promise.all([response.json(),response.headers]))
-  .then(([body,headers])=>{
-    console.log(headers.get("authorization"))
-    console.log(body)
-  })
+
 
   return (
-    <div className="App">
-          </div>
+    <BrowserRouter>
+      <Routes>
+        <Route exact path='/' element={<Home />} />
+        <Route exact path='/dashboard' element={
+        <PrivateRoute>
+        <Dashboard />
+        </PrivateRoute>}
+         />
+        <Route exact path='/login' element={<Login />} />
+      
+      </Routes>
+    </BrowserRouter>
   );
 }
 
