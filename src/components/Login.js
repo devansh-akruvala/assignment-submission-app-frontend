@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+
 import { useLocalState } from '../util/useLocalStorage';
 
 const Login = () => {
@@ -9,6 +10,7 @@ const Login = () => {
     const sendLoginRequest = (e) => {
         console.log(username, password)
         e.preventDefault();
+        
         fetch('api/auth/login', {
             "headers": {
                 "content-type": "application/json"
