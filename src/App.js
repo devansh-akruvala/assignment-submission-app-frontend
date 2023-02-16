@@ -10,6 +10,7 @@ import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import PrivateRoute from './util/PrivateRoute';
+import AssignmentView from './components/AssignmentView';
 
 
 
@@ -25,6 +26,11 @@ function App() {
         <Route exact path='/dashboard' element={
         <PrivateRoute>
         <Dashboard />
+        </PrivateRoute>}
+         />
+         <Route exact path='/assignments/:id' element={
+        <PrivateRoute>
+        <AssignmentView/>
         </PrivateRoute>}
          />
         <Route exact path='/login' element={<Login />} />
