@@ -7,9 +7,8 @@ const Login = () => {
   const [jwt, setJwt] = useLocalState("", "jwt");
   const [username, setusername] = useState("");
   const [password, setpasword] = useState("");
-
+  
   const sendLoginRequest = (e) => {
-    console.log(username, password);
     e.preventDefault();
 
     fetch("api/auth/login", {
@@ -31,6 +30,7 @@ const Login = () => {
       })
       .then(([body, headers]) => {
         setJwt(headers.get("authorization"));
+        window.location.href="dashboard"
       })
       .catch((message) => {
         alert(message);
