@@ -6,6 +6,8 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
