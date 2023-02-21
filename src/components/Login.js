@@ -66,7 +66,7 @@ const Login = () => {
               <Form.Label className="fs-4">Password</Form.Label>
               <Form.Control
                 size="lg"
-                type="passsword"
+                type="password"
                 value={password}
                 onChange={changePassword}
               />

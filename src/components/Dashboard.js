@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 import fetchData from "../services/fetchServices";
 import { useLocalState } from "../util/useLocalStorage";
 
@@ -22,6 +21,15 @@ const Dashboard = () => {
 
   return (
     <div style={{margin:"2rem"}}>
+      <Row>
+        <Col>
+        <div className="d-flex justify-content-end" onClick={() =>{
+          setJwt(null)
+          window.location.href="/login"
+        }} style={{cursor:"pointer"}}>
+          Logout
+          </div></Col>
+      </Row>
       <div className="mb-5">
       <Button size="lg" onClick={createAssignment}>Submit new Assignments</Button>
       </div>
@@ -31,9 +39,11 @@ const Dashboard = () => {
    
             <Card key={assignment.id} style={{ width: "18rem" }}>
               <Card.Body className="d-flex flex-column justify-content-around">
-                <Card.Title>Assignment #{assignment.id}</Card.Title>
+                <Card.Title>Assignment #{assignment.number}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
-                  status: {assignment.status}
+                <Badge pill bg="info" style={{ fontSize: "1em" }}>
+                {assignment.status}
+              </Badge>
                 </Card.Subtitle>
                 <Card.Text>
                   <p>
