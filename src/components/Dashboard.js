@@ -41,7 +41,7 @@ const Dashboard = () => {
               <Card.Body className="d-flex flex-column justify-content-around">
                 <Card.Title>Assignment #{assignment.number}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
-                <Badge pill bg="info" style={{ fontSize: "1em" }}>
+                <Badge pill bg={assignment.status==='Completed'?'success':'info'} style={{ fontSize: "1em" }}>
                 {assignment.status}
               </Badge>
                 </Card.Subtitle>

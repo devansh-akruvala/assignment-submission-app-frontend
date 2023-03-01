@@ -15,6 +15,7 @@ import PrivateRoute from './util/PrivateRoute';
 import AssignmentView from './components/AssignmentView';
 import CodeReviewDashboard from './components/CodeReviewDashboard';
 import { useState } from 'react';
+import CodeReviewAssignmentView from './components/CodeReviewAssignmentView';
 
 
 
@@ -43,13 +44,19 @@ function App() {
         <Route exact path='/dashboard' element={
         roles.find((role)=> role==='ROLE_CODE_REVIEWER')?
         <PrivateRoute>
-        <CodeReviewDashboard />
-        </PrivateRoute>:
+          <CodeReviewDashboard />
+        </PrivateRoute>
+        :
         <PrivateRoute>
-        <Dashboard />
+          <Dashboard />
         </PrivateRoute>}
          />
          <Route exact path='/assignments/:id' element={
+          roles.find((role)=> role==='ROLE_CODE_REVIEWER')?
+          <PrivateRoute>
+            <CodeReviewAssignmentView />
+          </PrivateRoute>
+          :
         <PrivateRoute>
         <AssignmentView/>
         </PrivateRoute>}
