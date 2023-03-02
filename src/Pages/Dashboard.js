@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
+import StatusBadge from "../Components/StatusBadge";
 import fetchData from "../services/fetchServices";
 import { useLocalState } from "../util/useLocalStorage";
 
 const Dashboard = () => {
+
+
   const [jwt, setJwt] = useLocalState("", "jwt");
   const [assignments, setassignments] = useState(null);
 
@@ -15,7 +18,7 @@ const Dashboard = () => {
 
   const createAssignment = () => {
     fetchData("/api/assignments", "POST", jwt).then((assignment) => {
-      window.location.href = `/assignments/${assignment.id}`;
+      window.location.href=`/assignments/${assignment.id}`;
     });
   };
 
@@ -41,9 +44,7 @@ const Dashboard = () => {
               <Card.Body className="d-flex flex-column justify-content-around">
                 <Card.Title>Assignment #{assignment.number}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
-                <Badge pill bg={assignment.status==='Completed'?'success':'info'} style={{ fontSize: "1em" }}>
-                {assignment.status}
-              </Badge>
+                <StatusBadge text={assignment.status}/>
                 </Card.Subtitle>
                 <Card.Text>
                   <p>
@@ -55,8 +56,8 @@ const Dashboard = () => {
                 </Card.Text>
                 <Button
                 variant="secondary"
-                  onClick={() => {
-                    window.location.href = `/assignments/${assignment.id}`;
+                  onClick={() => {  
+                    window.location.href=`/assignments/${assignment.id}`;
                   }}
                 >
                   Edit

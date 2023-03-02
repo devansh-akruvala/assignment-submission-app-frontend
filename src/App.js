@@ -8,14 +8,14 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 import jwt_decode from "jwt-decode";
 
-import Home from './components/Home';
-import Dashboard from './components/Dashboard';
-import Login from './components/Login';
+import Home from './Pages/Home';
+import Dashboard from './Pages/Dashboard';
+import Login from './Pages/Login';
 import PrivateRoute from './util/PrivateRoute';
-import AssignmentView from './components/AssignmentView';
-import CodeReviewDashboard from './components/CodeReviewDashboard';
+import AssignmentView from './Pages/AssignmentView';
+import CodeReviewDashboard from './Pages/CodeReviewDashboard';
 import { useState } from 'react';
-import CodeReviewAssignmentView from './components/CodeReviewAssignmentView';
+import CodeReviewAssignmentView from './Pages/CodeReviewAssignmentView';
 
 
 

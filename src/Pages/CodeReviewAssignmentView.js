@@ -10,60 +10,61 @@ import {
   Form,
   Row,
 } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import StatusBadge from "../Components/StatusBadge";
 
 import fetchData from "../services/fetchServices";
 import { useLocalState } from "../util/useLocalStorage";
 
-const AssignmentView = () => {
+const CodeReviewAssignmentView = () => {
+  
+  let navigate = useNavigate();
+  
   const [jwt, setJwt] = useLocalState("", "jwt");
 
   const [assignment, setassignment] = useState({
     githubUrl: "",
     branch: "",
     number: null,
-    status: null
+    status: null,
   });
   const [assignmentEnums, setassignmentEnums] = useState([]);
   const [assignmentStatusEnum, setassignmentStatusEnum] = useState([]);
 
   const assignmentId = window.location.href.split("/assignments/")[1];
 
-  const previousAssignment =  useRef(assignment)
+  const previousAssignment = useRef(assignment);
 
   const updateAssignment = (props, value) => {
     const newAssignment = { ...assignment };
     newAssignment[props] = value;
-     setassignment(newAssignment);
+    setassignment(newAssignment);
   };
 
-  const updateData= ()=>{
+  const updateData = () => {
     fetchData(`/api/assignments/${assignmentId}`, "PUT", jwt, assignment).then(
       (assignmentData) => {
         setassignment(assignmentData);
       }
     );
-  }
+  };
 
-  const save = () => {
-    if (assignment.status === assignmentStatusEnum[0].status) {
-        updateAssignment('status',assignmentStatusEnum[1].status)
-    }
-    else{
+  const save = (status) => {
+    if (status && assignment.status != status) {
+      updateAssignment("status", status);
+    } else {
       updateData();
     }
-
   };
 
   useEffect(() => {
-    if(previousAssignment.current.status!=assignment.status){
+    if (previousAssignment.current.status != assignment.status) {
       updateData();
     }
-    previousAssignment.current=assignment;
-  }, [assignment])
-  
+    previousAssignment.current = assignment;
+  }, [assignment]);
 
   useEffect(() => {
-
     fetchData(`/api/assignments/${assignmentId}`, "GET", jwt).then(
       (assignmentResponse) => {
         let assignmentData = assignmentResponse.assignment;
@@ -71,11 +72,9 @@ const AssignmentView = () => {
         setassignment(assignmentData);
         setassignmentEnums(assignmentResponse.assignmentEnums);
         setassignmentStatusEnum(assignmentResponse.assignmentStatusEnums);
-       
       }
-
     );
-  },[]);
+  }, []);
 
   return (
     <div>
@@ -86,39 +85,9 @@ const AssignmentView = () => {
               <h1>Assignemnt #{assignment.number}</h1>
             </Col>
             <Col>
-              <Badge pill bg="info" style={{ fontSize: "1em" }}>
-                {assignment.status}
-              </Badge>
+              <StatusBadge text={assignment.status}/>
             </Col>
           </Row>
-          <Form.Group as={Row} className="my-3" controlId="dropdown">
-            <Form.Label column sm="3">
-              Assignment Number
-            </Form.Label>
-            <Col sm="9">
-              <DropdownButton
-                as={ButtonGroup}
-                id={`dropdown`}
-                variant={"info"}
-                title={
-                  assignment.number
-                    ? `Assignment ${assignment.number}`
-                    : "Select Assignment"
-                }
-                onSelect={(selectedAssignment) => {
-                  updateAssignment("number", selectedAssignment);
-                }}
-              >
-                {assignmentEnums.map((assignmentEnum) => {
-                  return (
-                    <Dropdown.Item key={assignmentEnum.assignmentNumber} eventKey={assignmentEnum.assignmentNumber}>
-                      Assignment {assignmentEnum.assignmentNumber}
-                    </Dropdown.Item>
-                  );
-                })}
-              </DropdownButton>
-            </Col>
-          </Form.Group>
           <Form.Group as={Row} className="my-3" controlId="githubUrl">
             <Form.Label column sm="3">
               GitHub URL
@@ -126,6 +95,7 @@ const AssignmentView = () => {
             <Col sm="9">
               <Form.Control
                 type="url"
+                readOnly
                 onChange={(e) => updateAssignment("githubUrl", e.target.value)}
                 value={assignment.githubUrl}
               />
@@ -138,27 +108,64 @@ const AssignmentView = () => {
             <Col sm="9">
               <Form.Control
                 type="text"
+                readOnly
                 onChange={(e) => updateAssignment("branch", e.target.value)}
                 value={assignment.branch}
               />
             </Col>
           </Form.Group>
-          {assignment.status==='Completed'?<>
-          <Form.Group as={Row} className="my-3 d-flex align-items-center" controlId="codeReviewVideoUrl">
+          <Form.Group as={Row} className="my-3" controlId="codeReviewVideoUrl">
             <Form.Label column sm="3">
               Video Review URL
             </Form.Label>
             <Col sm="9">
-              <a href={assignment.codeReviewVideoUrl} >{assignment.codeReviewVideoUrl}</a>
-             </Col>
+              <Form.Control
+                type="url"
+                onChange={(e) =>
+                  updateAssignment("codeReviewVideoUrl", e.target.value)
+                }
+                value={assignment.codeReviewVideoUrl}
+              />
+            </Col>
           </Form.Group>
-          <Button variant="secondary" onClick={()=>{window.location.href='/dashboard'}}>Back</Button>
-          
-          </>:<div className="d-flex gap-5">
-          <Button onClick={save}>Submit Assignment</Button>
-          <Button variant="secondary" onClick={()=>{window.location.href='/dashboard'}}>Back</Button>
+          <div className="d-flex gap-5">
+            {assignment.status === "Completed" ? (
+              <Button
+                variant="secondary"
+                onClick={() => save(assignmentStatusEnum[2].status)}
+              >
+                Re-claim
+              </Button>
+            ) : (
+              <Button onClick={() => save(assignmentStatusEnum[4].status)}>
+                Complete Review
+              </Button>
+            )}
+            {assignment.status === "Needs Update" ? (
+              <Button
+                variant="secondary"
+                onClick={() => save(assignmentStatusEnum[2].status)}
+              >
+                Re-claim
+              </Button>
+            ) : (
+              <Button
+                variant="danger"
+                onClick={() => save(assignmentStatusEnum[3].status)}
+              >
+                Reject Assignment
+              </Button>
+            )}
+            <Button
+              variant="secondary"
+              onClick={() => {
+                window.location.href="/dashboard"
+              }
+              }
+            >
+              Back
+            </Button>
           </div>
-}
         </Container>
       ) : (
         <div></div>
@@ -167,4 +174,4 @@ const AssignmentView = () => {
   );
 };
 
-export default AssignmentView;
+export default CodeReviewAssignmentView;

@@ -4,6 +4,8 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useLocalState } from "../util/useLocalStorage";
 
 const Login = () => {
+
+
   const [jwt, setJwt] = useLocalState("", "jwt");
   const [username, setusername] = useState("");
   const [password, setpasword] = useState("");
@@ -30,7 +32,7 @@ const Login = () => {
       })
       .then(([body, headers]) => {
         setJwt(headers.get("authorization"));
-        window.location.href="dashboard"
+        window.location.href="/dashboard"
       })
       .catch((message) => {
         alert(message);
@@ -88,7 +90,7 @@ const Login = () => {
               variant="secondary"
               type="submit"
               onClick={() => {
-                window.location.href = "/";
+                window.location.href="/"
               }}
             >
               Exit

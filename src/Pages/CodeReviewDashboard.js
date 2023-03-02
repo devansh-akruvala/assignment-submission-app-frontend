@@ -3,8 +3,11 @@ import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 import fetchData from "../services/fetchServices";
 import { useLocalState } from "../util/useLocalStorage";
 import jwt_decode from "jwt-decode";
+import StatusBadge from "../Components/StatusBadge";
 
 const CodeReviewDashboard = () => {
+
+
   const [jwt, setJwt] = useLocalState("", "jwt");
   const [assignments, setassignments] = useState(null);
 
@@ -44,7 +47,7 @@ const CodeReviewDashboard = () => {
             className="d-flex justify-content-end"
             onClick={() => {
               setJwt(null);
-              window.location.href = "/login";
+              window.location.href="/login";
             }}
             style={{ cursor: "pointer" }}
           >
@@ -73,9 +76,7 @@ const CodeReviewDashboard = () => {
                   <Card.Body className="d-flex flex-column justify-content-around">
                     <Card.Title>Assignment #{assignment.number}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">
-                      <Badge pill bg="info" style={{ fontSize: "1em" }}>
-                        {assignment.status}
-                      </Badge>
+                    <StatusBadge text={assignment.status}/>
                     </Card.Subtitle>
                     <Card.Text>
                       <p>
@@ -116,9 +117,7 @@ const CodeReviewDashboard = () => {
                   <Card.Body className="d-flex flex-column justify-content-around">
                     <Card.Title>Assignment #{assignment.number}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">
-                      <Badge pill bg="info" style={{ fontSize: "1em" }}>
-                        {assignment.status}
-                      </Badge>
+                    <StatusBadge text={assignment.status}/>
                     </Card.Subtitle>
                     <Card.Text>
                       <p>
@@ -149,21 +148,22 @@ const CodeReviewDashboard = () => {
       <div className="assignment-wrapper needs-update">
         <div className="assignment-wrapper-title h3 px-2">Awaiting review</div>
         {assignments && assignments
-              .filter((assignments) => assignments.status === "Submitted").length>0 ?  (
+              .filter((assignments) => assignments.status === "Submitted" || assignments.status === "Resubmitted").length>0 ?  (
           <div
             className="d-grid gap-4"
             style={{ gridTemplateColumns: "repeat(auto-fill,18rem)" }}
           >
             {assignments
-              .filter((assignments) => assignments.status === "Submitted")
+              .filter((assignments) => assignments.status === "Submitted" || assignments.status === "Resubmitted")
+              .sort((a,b)=>{
+               return a.status==='Resubmitted'?-1:1;           
+              })
               .map((assignment) => (
                 <Card key={assignment.id} style={{ width: "18rem" }}>
                   <Card.Body className="d-flex flex-column justify-content-around">
                     <Card.Title>Assignment #{assignment.number}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">
-                      <Badge pill bg="info" style={{ fontSize: "1em" }}>
-                        {assignment.status}
-                      </Badge>
+                    <StatusBadge text={assignment.status}/>
                     </Card.Subtitle>
                     <Card.Text>
                       <p>
