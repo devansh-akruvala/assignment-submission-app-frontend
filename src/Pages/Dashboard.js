@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Button, Card, Col, Row } from "react-bootstrap";
+import {Button, Card, Col, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import StatusBadge from "../Components/StatusBadge";
+import { useUser } from "../Contexts/UserProvider";
 import fetchData from "../services/fetchServices";
-import { useLocalState } from "../util/useLocalStorage";
 
 const Dashboard = () => {
-
-
-  const [jwt, setJwt] = useLocalState("", "jwt");
+  const navigate = useNavigate();
+  const user=useUser();
   const [assignments, setassignments] = useState(null);
 
   useEffect(() => {
-    fetchData("/api/assignments", "GET", jwt).then((assignmentsData) => {
+    fetchData("/api/assignments", "GET", user.jwt).then((assignmentsData) => {
       setassignments(assignmentsData);
     });
   }, []);
 
   const createAssignment = () => {
-    fetchData("/api/assignments", "POST", jwt).then((assignment) => {
+    fetchData("/api/assignments", "POST", user.jwt).then((assignment) => {
       window.location.href=`/assignments/${assignment.id}`;
     });
   };
@@ -27,8 +27,8 @@ const Dashboard = () => {
       <Row>
         <Col>
         <div className="d-flex justify-content-end" onClick={() =>{
-          setJwt(null)
-          window.location.href="/login"
+          user.setJwt(null)
+          navigate("/login")
         }} style={{cursor:"pointer"}}>
           Logout
           </div></Col>

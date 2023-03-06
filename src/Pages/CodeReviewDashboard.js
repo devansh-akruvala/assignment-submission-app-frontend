@@ -4,27 +4,28 @@ import fetchData from "../services/fetchServices";
 import { useLocalState } from "../util/useLocalStorage";
 import jwt_decode from "jwt-decode";
 import StatusBadge from "../Components/StatusBadge";
+import { useUser } from "../Contexts/UserProvider";
+import { useNavigate } from "react-router-dom";
 
 const CodeReviewDashboard = () => {
-
-
-  const [jwt, setJwt] = useLocalState("", "jwt");
+  const navigate = useNavigate();
+  const user = useUser();
   const [assignments, setassignments] = useState(null);
 
   useEffect(() => {
-    fetchData("/api/assignments", "GET", jwt).then((assignmentsData) => {
+    fetchData("/api/assignments", "GET", user.jwt).then((assignmentsData) => {
       setassignments(assignmentsData);
     });
   }, []);
 
   const claimAssignment = (assignment) => {
-    const jwtDecode = jwt_decode(jwt);
+    const jwtDecode = jwt_decode(user.jwt);
     const user = {
       username: jwtDecode.sub,
     };
     assignment.codeReviewer = user;
     assignment.status = "In Review";
-    fetchData(`/api/assignments/${assignment.id}`, "PUT", jwt, assignment).then(
+    fetchData(`/api/assignments/${assignment.id}`, "PUT", user.jwt, assignment).then(
       (updatedAssignment) => {
         const assignmentCopy = [...assignments];
         const index=assignmentCopy.findIndex(assignmentCopy=>assignmentCopy.id===assignment.id);
@@ -46,8 +47,8 @@ const CodeReviewDashboard = () => {
           <div
             className="d-flex justify-content-end"
             onClick={() => {
-              setJwt(null);
-              window.location.href="/login";
+              user.setJwt(null);
+              navigate("/login");
             }}
             style={{ cursor: "pointer" }}
           >
