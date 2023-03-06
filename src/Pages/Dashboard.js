@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   const createAssignment = () => {
     fetchData("/api/assignments", "POST", user.jwt).then((assignment) => {
-      window.location.href=`/assignments/${assignment.id}`;
+      navigate(`/assignments/${assignment.id}`);
     });
   };
 
@@ -57,7 +57,7 @@ const Dashboard = () => {
                 <Button
                 variant="secondary"
                   onClick={() => {  
-                    window.location.href=`/assignments/${assignment.id}`;
+                    navigate(`/assignments/${assignment.id}`);
                   }}
                 >
                   Edit

@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import {  useUser } from "../Contexts/UserProvider";
-
+import { useUser } from "../Contexts/UserProvider";
 
 const Login = () => {
   const navigate = useNavigate();
   const user = useUser();
   const [username, setusername] = useState("");
   const [password, setpasword] = useState("");
-  
+
   useEffect(() => {
-    if(user.jwt!=null){
-      navigate("/dashboard")
+    if (user.jwt != null) {
+      navigate("/dashboard");
     }
-  }, [user.jwt]) 
+  }, [user.jwt]);
 
   const sendLoginRequest = (e) => {
     e.preventDefault();
@@ -37,9 +36,7 @@ const Login = () => {
         }
       })
       .then(([body, headers]) => {
-         user.setJwt(headers.get("authorization"));
-        //window.location.href="/dashboard"
-        //(headers.get("authorization"))
+        user.setJwt(headers.get("authorization"));
       })
       .catch((message) => {
         alert(message);
@@ -83,7 +80,11 @@ const Login = () => {
           </Col>
         </Row>
         <Row className="justify-content-center">
-          <Col md="6" lg="8" className="mt-3 d-flex flex-column gap-4 flex-md-row justify-content-md-around">
+          <Col
+            md="6"
+            lg="8"
+            className="mt-3 d-flex flex-column gap-4 flex-md-row justify-content-md-around"
+          >
             <Button
               size="lg"
               variant="primary"
@@ -97,7 +98,7 @@ const Login = () => {
               variant="secondary"
               type="submit"
               onClick={() => {
-                window.location.href="/"
+                window.location.href = "/";
               }}
             >
               Exit

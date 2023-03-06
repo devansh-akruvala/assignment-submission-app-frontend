@@ -12,14 +12,13 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import StatusBadge from "../Components/StatusBadge";
+import { useUser } from "../Contexts/UserProvider";
 
 import fetchData from "../services/fetchServices";
-import { useLocalState } from "../util/useLocalStorage";
 
 const AssignmentView = () => {
   let navigate = useNavigate();
-
-  const [jwt, setJwt] = useLocalState("", "jwt");
+  const user=useUser();
 
   const [assignment, setassignment] = useState({
     githubUrl: "",
@@ -42,7 +41,7 @@ const AssignmentView = () => {
 
   const updateData = () => {
     
-    fetchData(`/api/assignments/${assignmentId}`, "PUT", jwt, assignment).then(
+    fetchData(`/api/assignments/${assignmentId}`, "PUT", user.jwt, assignment).then(
       (assignmentData) => {
         setassignment(assignmentData);
       }
@@ -65,7 +64,7 @@ const AssignmentView = () => {
   }, [assignment]);
 
   useEffect(() => {
-    fetchData(`/api/assignments/${assignmentId}`, "GET", jwt).then(
+    fetchData(`/api/assignments/${assignmentId}`, "GET", user.jwt).then(
       (assignmentResponse) => {
         let assignmentData = assignmentResponse.assignment;
 
@@ -162,7 +161,7 @@ const AssignmentView = () => {
               <Button
                 variant="secondary"
                 onClick={() => {
-                  window.location.href="/dashboard";
+                  navigate("/dashboard");
                 }}
               >
                 Back
@@ -174,7 +173,7 @@ const AssignmentView = () => {
               <Button
                 variant="secondary"
                 onClick={() => {
-                  window.location.href="/dashboard";
+                  navigate("/dashboard");
                 }}
               >
                 Back
@@ -186,7 +185,7 @@ const AssignmentView = () => {
           <Button
             variant="secondary"
             onClick={() => {
-              window.location.href="/dashboard";
+              navigate("/dashboard");
             }}
           >
             Back

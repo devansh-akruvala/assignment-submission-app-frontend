@@ -1,5 +1,5 @@
 import "./App.css";
-import { useLocalState } from "./util/useLocalStorage";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import jwt_decode from "jwt-decode";
@@ -15,7 +15,6 @@ import CodeReviewAssignmentView from "./Pages/CodeReviewAssignmentView";
 import { UserProvider, useUser } from "./Contexts/UserProvider";
 
 function App() {
-  const [jwt, setJwt] = useLocalState("", "jwt");
   const user = useUser();
   const getRolesFromJWT = () => {
     if (user.jwt) {

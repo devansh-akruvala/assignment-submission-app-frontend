@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 import fetchData from "../services/fetchServices";
-import { useLocalState } from "../util/useLocalStorage";
 import jwt_decode from "jwt-decode";
 import StatusBadge from "../Components/StatusBadge";
 import { useUser } from "../Contexts/UserProvider";
@@ -20,10 +19,10 @@ const CodeReviewDashboard = () => {
 
   const claimAssignment = (assignment) => {
     const jwtDecode = jwt_decode(user.jwt);
-    const user = {
+    const userReq = {
       username: jwtDecode.sub,
     };
-    assignment.codeReviewer = user;
+    assignment.codeReviewer = userReq;
     assignment.status = "In Review";
     fetchData(`/api/assignments/${assignment.id}`, "PUT", user.jwt, assignment).then(
       (updatedAssignment) => {
@@ -36,7 +35,7 @@ const CodeReviewDashboard = () => {
   };
 
   const editReview=(assignment)=>{
-    window.location.href=`/assignments/${assignment.id}`;
+    navigate(`/assignments/${assignment.id}`);
   }
 
 
