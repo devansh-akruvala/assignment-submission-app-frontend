@@ -16,6 +16,7 @@ const PrivateRoute = ({ children }) => {
     }
     );
   } else {
+    user.setJwt(null)
     return <Navigate to="/login" />;
   }
 

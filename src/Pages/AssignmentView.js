@@ -10,7 +10,8 @@ import {
   Form,
   Row,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import CommentItem from "../Components/CommentItem";
 import StatusBadge from "../Components/StatusBadge";
 import { useUser } from "../Contexts/UserProvider";
 
@@ -18,8 +19,8 @@ import fetchData from "../services/fetchServices";
 
 const AssignmentView = () => {
   let navigate = useNavigate();
-  const user=useUser();
-
+  const user = useUser();
+  const { assignmentId } = useParams();
   const [assignment, setassignment] = useState({
     githubUrl: "",
     branch: "",
@@ -28,8 +29,14 @@ const AssignmentView = () => {
   });
   const [assignmentEnums, setassignmentEnums] = useState([]);
   const [assignmentStatusEnum, setassignmentStatusEnum] = useState([]);
-
-  const assignmentId = window.location.href.split("/assignments/")[1];
+  const [comments, setComments] = useState([]);
+  const emptyComment = {
+    id: null,
+    text: "",
+    user: user.jwt,
+    assignmentId: assignmentId,
+  }
+  const [comment, setComment] = useState(emptyComment);
 
   const previousAssignment = useRef(assignment);
 
@@ -40,12 +47,14 @@ const AssignmentView = () => {
   };
 
   const updateData = () => {
-    
-    fetchData(`/api/assignments/${assignmentId}`, "PUT", user.jwt, assignment).then(
-      (assignmentData) => {
-        setassignment(assignmentData);
-      }
-    );
+    fetchData(
+      `/api/assignments/${assignmentId}`,
+      "PUT",
+      user.jwt,
+      assignment
+    ).then((assignmentData) => {
+      setassignment(assignmentData);
+    });
   };
 
   const save = (status) => {
@@ -55,6 +64,16 @@ const AssignmentView = () => {
       updateData();
     }
   };
+  useEffect(() => {
+    fetchData(
+      `/api/comments?assignmentId=${assignmentId}`,
+      "GET",
+      user.jwt,
+      null
+    ).then((commentsData) => {
+      setComments(commentsData);
+    });
+  }, []);
   useEffect(() => {
     if (previousAssignment.current.status != assignment.status) {
       updateData();
@@ -74,6 +93,48 @@ const AssignmentView = () => {
       }
     );
   }, []);
+  const handleEditComment = (commentId) => {
+    const id = comments.findIndex((comment) => comment.id === commentId);
+    const commentCopy = {
+      id: comments[id].id,
+      text: comments[id].text,
+      user:   user.jwt,
+      assignmentId: assignmentId,
+    };
+    setComment(commentCopy);
+  };
+
+  const handleDeleteComment = (commentId) => {
+    // todo: Send Delete REQ TO SERVER
+    console.log("DELERED", commentId);
+  };
+  const submitComment = (e) => {
+    if (comment.id) {
+      fetchData("/api/comments", "PUT", user.jwt, comment).then(
+        (commentData) => {
+        const id = comments.findIndex((comment) => comment.id === commentData.id);
+          const commentsCopy = [...comments];
+          commentsCopy[id]=commentData;
+          setComments(commentsCopy);
+          setComment(emptyComment);
+        }
+      );
+    } else {
+      fetchData("/api/comments", "POST", user.jwt, comment).then(
+        (commentData) => {
+          const commentsCopy = [...comments];
+          commentsCopy.push(commentData);
+          setComments(commentsCopy);
+          setComment(emptyComment);
+        }
+      );
+    }
+  };
+  const updateComment = (e) => {
+    const commentCopt = { ...comment };
+    commentCopt.text = e.target.value;
+    setComment(commentCopt);
+  };
 
   return (
     <div>
@@ -167,9 +228,11 @@ const AssignmentView = () => {
                 Back
               </Button>
             </>
-          ) : assignment.status==="Pending Submission" ?(
+          ) : assignment.status === "Pending Submission" ? (
             <div className="d-flex gap-5">
-              <Button onClick={()=>save("Submitted")}>Submit Assignment</Button>
+              <Button onClick={() => save("Submitted")}>
+                Submit Assignment
+              </Button>
               <Button
                 variant="secondary"
                 onClick={() => {
@@ -179,20 +242,40 @@ const AssignmentView = () => {
                 Back
               </Button>
             </div>
-          ) :(
-          <div className="d-flex gap-5">
-          <Button onClick={()=>save("Resubmitted")}>Resubmit Assignment</Button>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              navigate("/dashboard");
-            }}
-          >
-            Back
-          </Button>
-        </div>
-      )
-          }
+          ) : (
+            <div className="d-flex gap-5">
+              <Button onClick={() => save("Resubmitted")}>
+                Resubmit Assignment
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  navigate("/dashboard");
+                }}
+              >
+                Back
+              </Button>
+            </div>
+          )}
+          <div className="mt-5">
+            <textarea
+              onChange={updateComment}
+              value={comment.text}
+              style={{ width: "100%", borderRadius: "0.5em" }}
+            >
+              {" "}
+            </textarea>
+            <Button onClick={submitComment}>Post Comment</Button>
+          </div>
+          <div className="mt-5">
+            {comments.map((comment) => (
+              <CommentItem
+                comment={comment}
+                emitDeleteComment={handleDeleteComment}
+                emitEditComment={handleEditComment}
+              />
+            ))}
+          </div>
         </Container>
       ) : (
         <div></div>
