@@ -11,6 +11,7 @@ import {
   Row,
 } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+import Comment from "../Components/Comment";
 import CommentItem from "../Components/CommentItem";
 import StatusBadge from "../Components/StatusBadge";
 import { useUser } from "../Contexts/UserProvider";
@@ -257,25 +258,7 @@ const AssignmentView = () => {
               </Button>
             </div>
           )}
-          <div className="mt-5">
-            <textarea
-              onChange={updateComment}
-              value={comment.text}
-              style={{ width: "100%", borderRadius: "0.5em" }}
-            >
-              {" "}
-            </textarea>
-            <Button onClick={submitComment}>Post Comment</Button>
-          </div>
-          <div className="mt-5">
-            {comments.map((comment) => (
-              <CommentItem
-                comment={comment}
-                emitDeleteComment={handleDeleteComment}
-                emitEditComment={handleEditComment}
-              />
-            ))}
-          </div>
+          <Comment assignmentId={assignmentId}/>
         </Container>
       ) : (
         <div></div>

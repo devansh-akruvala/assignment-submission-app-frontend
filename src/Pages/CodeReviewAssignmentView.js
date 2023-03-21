@@ -11,6 +11,7 @@ import {
   Row,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import Comment from "../Components/Comment";
 import StatusBadge from "../Components/StatusBadge";
 import { useUser } from "../Contexts/UserProvider";
 
@@ -166,6 +167,7 @@ const CodeReviewAssignmentView = () => {
               Back
             </Button>
           </div>
+          <Comment assignmentId={assignmentId}/>
         </Container>
       ) : (
         <div></div>
